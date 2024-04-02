@@ -1,10 +1,5 @@
 # Towards Unsupervised Blind Face Restoration using Diffusion Prior
 
-
-This repository contains the official implementation for the paper:
-
-**Towards Unsupervised Blind Face Restoration using Diffusion Prior**
-
 Tianshu Kuai, Sina Honari, Igor Gilitschenski, and Alex Levinshtein
 
 
