@@ -1,0 +1,91 @@
+finetune: True
+finetune_ckpt: weights/SwinIR/swinir_gan_v1.pth             # pre-trained checkpoint to be fine-tuned
+
+model:
+  target: models.swinir.SwinIR
+  params:
+    img_size: 64
+    patch_size: 1
+    in_chans: 3
+    embed_dim: 180
+    depths: [6, 6, 6, 6, 6, 6, 6, 6]
+    num_heads: [6, 6, 6, 6, 6, 6, 6, 6]
+    window_size: 8
+    mlp_ratio: 2
+    sf: 8
+    img_range: 1.0
+    upsampler: "nearest+conv"
+    resi_connection: "1conv"
+    unshuffle: True
+    unshuffle_scale: 8
+
+  network_d:
+    type: UNetDiscriminatorSN
+    num_in_ch: 3
+    num_feat: 64
+    skip_connection: True
+
+train:
+  lr: 2e-5
+  lr_min: 5e-6
+  batch: [16, 8]   # batchsize for training and validation
+  microbatch: 4
+  num_workers: 8
+  prefetch_factor: 2
+  iterations: 20000
+  weight_decay: 0
+  save_freq: 2500
+  val_freq: 2500
+  log_freq: [100, 2500, 10]
+
+  loss:
+    # name: weight
+    lpips: 0.1
+    l1_loss: 1.0
+    l2_loss: 0.0
+    reduction: mean
+
+  # gan loss
+  gan_opt:
+    type: GANLoss
+    gan_type: vanilla
+    real_label_val: 1.0
+    fake_label_val: 0.0
+    loss_weight: !!float 1e-1
+
+  net_d_iters: 1
+  net_d_init_iters: 0
+
+data:
+  train:
+    type: folder 
+    params:
+      dir_path: data/celeba-raw-noise-4x-iso-1500/train_lq                      # low-quality inputs directory
+      dir_path_gt: data/celeba-raw-noise-4x-iso-1500/swinir-gan-train_gt-16-v2  # pseudo targets directory
+      ext: png
+      need_gt_path: False
+      length: ~
+      mean: 0.0
+      std: 1.0
+  val:
+    type: folder 
+    params:
+      dir_path: data/celeba-raw-noise-4x-iso-1500/test_lq                    # low-quality testing inputs directory for evaluation purpose
+      dir_path_gt: data/CelebA-Test-split/test_gt                            # GT directory for evaluation purpose
+      ext: png
+      need_gt_path: False
+      length: ~
+      mean: 0.0
+      std: 1.0
+
+  gan_clean:
+    type: folder
+    params:
+      dir_path: data/images512x512                     # high-quality face dataset (FFHQ) directory
+      dir_path_gt: data/images512x512                  # high-quality face dataset (FFHQ) directory
+      ext: png
+      need_gt_path: False
+      length: ~
+      mean: 0.0
+      std: 1.0
+    merge_gan_data_finetune: False

@@ -44,19 +44,15 @@ def calculate_psnr_ssim(args):
                 img_restored[:, :, j] = img_restored[:, :, j] / std * std_l[j]
 
         if args.test_y_channel and img_gt.ndim == 3 and img_gt.shape[2] == 3:
-            # img_gt = bgr2ycbcr(img_gt, y_only=True)
-            # img_restored = bgr2ycbcr(img_restored, y_only=True)
             raise NotImplementedError
 
         # calculate PSNR and SSIM
         psnr = calculate_psnr(img_gt * 255, img_restored * 255, crop_border=args.crop_border, input_order='HWC')
         ssim = calculate_ssim(img_gt * 255, img_restored * 255, crop_border=args.crop_border, input_order='HWC')
-        # print(f'{i+1:3d}: {basename:25}. \tPSNR: {psnr:.6f} dB, \tSSIM: {ssim:.6f}')
+
         psnr_all.append(psnr)
         ssim_all.append(ssim)
-    # print(args.gt_folder)
-    # print(args.restored_folder)
-    # print(f'Average: PSNR: {sum(psnr_all) / len(psnr_all):.6f} dB, SSIM: {sum(ssim_all) / len(ssim_all):.6f}')
+
     psnr_mean = sum(psnr_all) / len(psnr_all)
     ssim_mean = sum(ssim_all) / len(ssim_all)
     

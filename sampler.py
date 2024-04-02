@@ -179,32 +179,6 @@ class DifIRSampler(BaseSampler):
                 self.model_ir = model_ir
             self.model_ir.eval()
 
-        if not self.configs.aligned:
-            assert self.num_gpus == 1, 'Only support one gpu for unalinged model'
-            # face dection model
-            self.face_helper = FaceRestoreHelper(
-                    self.configs.detection.upscale,
-                    face_size=self.configs.im_size,
-                    crop_ratio=(1, 1),
-                    det_model = self.configs.detection.det_model,
-                    save_ext='png',
-                    use_parse=True,
-                    device=torch.device(f'cuda:{self.rank}'),
-                    )
-
-            # background super-resolution
-            bg_model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32, scale=2)
-            self.bg_model = RealESRGANer(
-                scale=2,
-                model_path='https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.1/RealESRGAN_x2plus.pth',
-                model=bg_model,
-                tile=400,
-                tile_pad=10,
-                pre_pad=0,
-                half=True,
-                device=torch.device(f'cuda:{self.rank}'),
-                )  # need to set False in CPU mode
-
     def sample_func_ir_aligned(
             self,
             y0,
@@ -337,99 +311,6 @@ class DifIRSampler(BaseSampler):
 
         return im_hq
 
-
-    def sample_func_bfr_unaligned(
-            self,
-            y0,
-            bs=16,
-            start_timesteps=None,
-            post_fun=None,
-            model_kwargs_ir=None,
-            need_restoration=True,
-            only_center_face=False,
-            draw_box=False,
-            ):
-        '''
-        Input:
-            y0: h x w x c numpy array, uint8, BGR
-            bs: batch size for face restoration
-            upscale: upsampling factor for the restorated image
-            start_timesteps: integer, range [0, num_timesteps-1],
-                for accelerated sampling (e.g., 'ddim250'), range [0, 249]
-            post_fun: post-processing for the enhanced image
-            model_kwargs_ir: additional parameters for restoration model
-            only_center_face:
-            draw_box: draw a box for each face
-        Output:
-            restored_img: h x w x c, numpy array, uint8, BGR
-            restored_faces: list, h x w x c, numpy array, uint8, BGR
-            cropped_faces: list, h x w x c, numpy array, uint8, BGR
-        '''
-
-        def  _process_batch(cropped_faces_list):
-            length = len(cropped_faces_list)
-            cropped_face_t = np.stack(
-                    img2tensor(cropped_faces_list, bgr2rgb=True, float32=True),
-                    axis=0) / 255.
-            cropped_face_t = torch.from_numpy(cropped_face_t).to(torch.device(f"cuda:{self.rank}"))
-            restored_faces = self.sample_func_ir_aligned(
-                    cropped_face_t,
-                    start_timesteps=start_timesteps,
-                    post_fun=post_fun,
-                    model_kwargs_ir=model_kwargs_ir,
-                    need_restoration=need_restoration,
-                    )[0]      # [0, 1], b x c x h x w
-            return restored_faces
-
-        assert not self.configs.aligned
-
-        self.face_helper.clean_all()
-        self.face_helper.read_image(y0)
-        num_det_faces = self.face_helper.get_face_landmarks_5(
-                only_center_face=only_center_face,
-                resize=640,
-                eye_dist_threshold=5,
-                )
-        # align and warp each face
-        self.face_helper.align_warp_face()
-
-        num_cropped_face = len(self.face_helper.cropped_faces)
-        if num_cropped_face > bs:
-            restored_faces = []
-            for idx_start in range(0, num_cropped_face, bs):
-                idx_end = idx_start + bs if idx_start + bs < num_cropped_face else num_cropped_face
-                current_cropped_faces = self.face_helper.cropped_faces[idx_start:idx_end]
-                current_restored_faces = _process_batch(current_cropped_faces)
-                current_restored_faces = util_image.tensor2img(
-                        list(current_restored_faces.split(1, dim=0)),
-                        rgb2bgr=True,
-                        min_max=(0, 1),
-                        out_type=np.uint8,
-                        )
-                restored_faces.extend(current_restored_faces)
-        else:
-            restored_faces = _process_batch(self.face_helper.cropped_faces)
-            restored_faces = util_image.tensor2img(
-                    list(restored_faces.split(1, dim=0)),
-                    rgb2bgr=True,
-                    min_max=(0, 1),
-                    out_type=np.uint8,
-                    )
-        for xx in restored_faces:
-            self.face_helper.add_restored_face(xx)
-
-        # paste_back
-        bg_img = self.bg_model.enhance(y0, outscale=self.configs.detection.upscale)[0]
-        self.face_helper.get_inverse_affine(None)
-        # paste each restored face to the input image
-        restored_img = self.face_helper.paste_faces_to_input_image(
-                upsample_img=bg_img,
-                draw_box=draw_box,
-                )
-
-        cropped_faces = self.face_helper.cropped_faces
-
-        return restored_img, restored_faces, cropped_faces
 
 if __name__ == '__main__':
     import argparse

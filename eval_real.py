@@ -58,7 +58,6 @@ def main():
         maniqa_list.append(maniqa_result)
         musiq_list.append(musiq_result)
         filename_list.append(Path(pred_img_path).stem)
-        print(pred_img_path, maniqa_result, musiq_result, Path(pred_img_path).stem)
 
     maniqa_mean = np.mean(np.array(maniqa_list))
     musiq_mean = np.mean(np.array(musiq_list))
@@ -73,12 +72,6 @@ def main():
         f.write('filename | MANIQA | MUSIQ \n')
         for file_idx in range(len(filename_list)):
             f.write(f'{filename_list[file_idx]} | {maniqa_list[file_idx]} | {musiq_list[file_idx]}\n')
-    
-    output_pickle_file = Path(args.out_path) / 'output_real.pkl'
-    with open(output_pickle_file, 'wb') as pkl_file:
-        pickle.dump({'filenames': filename_list, 
-                    'maniqa': np.array(maniqa_list),
-                    'musiq': np.array(musiq_list)}, pkl_file)
             
         
 

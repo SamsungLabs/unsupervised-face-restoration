@@ -1,0 +1,10 @@
+*.pyc
+__pycache__/
+utils/__pycache__/
+utils/__pycache__/
+weights/
+datapipe/
+misc/
+logs/
+results/
+data
