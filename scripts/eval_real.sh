@@ -1,5 +1,4 @@
 results_path=$1
-gt_path=$2
 
 # $pred_path is the folder that contains results
 pred_path=$results_path/restored_faces

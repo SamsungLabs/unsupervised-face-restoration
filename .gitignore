@@ -1,8 +1,9 @@
 *.pyc
+*.pth
+data_prep/
 __pycache__/
 utils/__pycache__/
 utils/__pycache__/
-weights/
 datapipe/
 misc/
 logs/

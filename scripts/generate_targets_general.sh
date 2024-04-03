@@ -9,7 +9,3 @@ python generate_pseudo_targets.py --in_path $input_dir \
                                   --reg_end_timesteps 90 \
                                   --apply_filter \
                                   --config_path configs/targets/iddpm_ffhq512_swinir_gan.yaml 
-
-
-# example usage
-# bash scripts/generate_targets_general.sh data/celeba-raw-noise-4x-iso-1500/train_lq data/celeba-raw-noise-4x-iso-1500/test_target_script 16

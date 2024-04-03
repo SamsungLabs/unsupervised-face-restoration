@@ -81,14 +81,14 @@ data:
       gt_gray: True
 
       need_gt_path: False
-  val:
-    type: folder 
-    params:
-      dir_path: data/CelebA-Test/celeba_512_validation_lq
-      dir_path_gt: data/CelebA-Test/celeba_512_validation
-      ext: png
-      need_gt_path: False
-      length: ~
-      mean: 0.0
-      std: 1.0
+  # val:
+  #   type: folder 
+  #   params:
+  #     dir_path: data/CelebA-Test/celeba_512_validation_lq
+  #     dir_path_gt: data/CelebA-Test/celeba_512_validation
+  #     ext: png
+  #     need_gt_path: False
+  #     length: ~
+  #     mean: 0.0
+  #     std: 1.0
 

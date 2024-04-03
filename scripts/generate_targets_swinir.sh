@@ -10,7 +10,3 @@ python generate_pseudo_targets.py --in_path $input_dir \
                                   --apply_filter \
                                   --config_path configs/targets/iddpm_ffhq512_swinir_gan.yaml \
                                   --swinir 
-
-
-# example usage
-# bash scripts/generate_targets_swinir.sh data/celeba-raw-noise-4x-iso-1500/train_lq data/celeba-raw-noise-4x-iso-1500/test_target_script 16

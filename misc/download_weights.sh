@@ -11,6 +11,12 @@ wget https://github.com/zsyOAOA/DifFace/releases/download/V1.0/iddpm_ffhq512_ema
 mkdir SwinIR && cd SwinIR
 wget $Our_SwinIR && cd ..
 
+# download pre-trained CodeFormer models
+
+cd CodeFormer/weights/CodeFormer
+wget https://github.com/sczhou/CodeFormer/releases/download/v0.1.0/codeformer.pth
+wget https://github.com/sczhou/CodeFormer/releases/download/v0.1.0/vqgan_discriminator.pth && cd ../../..
+
 
 # download stats files for computing FID
 
