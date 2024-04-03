@@ -27,7 +27,13 @@ bash misc/download_weights.sh
 
 ## Dataset Preparation
 
-Download the entire [FFHQ dataset](https://github.com/NVlabs/ffhq-dataset) for the adversarial loss during fine-tuning. Prepare the dataset by following the procedure [here](https://github.com/zsyOAOA/DifFace?tab=readme-ov-file#testing) to save the images into size of `512x512`.
+Download the entire [FFHQ dataset](https://github.com/NVlabs/ffhq-dataset) for the adversarial loss during fine-tuning. Preprocess the images (1024x1024) to save them into size of `512x512`:
+```
+python datapipe/prepare/face/big2small_face.py --face_dir [Face folder(1024x1024)] --save_dir [Saving folder (512x512)] --pch_size 512 
+
+python datapipe/prepare/face/save_filenames.py --face_dir [Face folder(512x512)] 
+```
+
 
 ### Synthetic Dataset
 To reproduce our results on synthetic dataset, download the [CelebA-Test dataset](https://xinntao.github.io/projects/gfpgan) (Both HQ and LQ). We provide script to generate our synthetic dataset described in the paper. Place the high-quality (512x512) face images in a directory and run:

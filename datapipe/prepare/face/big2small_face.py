@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
-# Power by Zongsheng Yue 2022-05-18 07:58:01
-
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[3]))
@@ -12,9 +8,9 @@ import albumentations as Aug
 from utils import util_image
 
 parser = argparse.ArgumentParser(prog='SISR dataset Generation')
-parser.add_argument('--face_dir', default='/home/jupyter/data/FFHQ/images1024x1024', type=str,
+parser.add_argument('--face_dir', default='data/FFHQ/images1024x1024', type=str,
                                             metavar='PATH', help="Path to save the HR face images")
-parser.add_argument('--save_dir', default='/home/jupyter/data/FFHQ/', type=str,
+parser.add_argument('--save_dir', default='data/', type=str,
                                        metavar='PATH', help="Path to save the resized face images")
 # FFHQ: png
 parser.add_argument('--ext', default='png', type=str, help="Image format of the HR face images")
