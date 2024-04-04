@@ -38,12 +38,15 @@ python datapipe/prepare/face/save_filenames.py --face_dir [Face folder(512x512)]
 ### Synthetic Dataset
 To reproduce our results on synthetic dataset, download the [CelebA-Test dataset](https://xinntao.github.io/projects/gfpgan) (Both HQ and LQ). We provide script to generate our synthetic dataset described in the paper. Place the high-quality (512x512) face images in a directory and run:
 ```
-# to be added
+cd data_prep
+python generate_LQ_from_HQ.py --hq_dir ../data/entire_sets/CelebA-Test/celeba_512_validation --results_dir 4x-downsampling-severe-noise --iso_min 3200 --iso_max 3200 --scale 4
+cd ..
 ```
+The synthesized low-quality images will be saved to `./data_prep/4x-downsampling-severe-noise/div2k_scale_x4_IMX754_bayer_ISO3200-3200/demosaic_bayer_rendered`. 
 
 ### Real-world Dataset
 
-We use the entire [Wider-Test](https://shangchenzhou.com/projects/CodeFormer/) for fine-tuning the pre-trained model. To evaluate the fine-tuned model, download our [Wider-Test-200](https://tianshukuai.github.io/). Note that our `Wider-Test-200` does not contain images in the `Wider-Test` dataset.
+We use the entire [Wider-Test](https://shangchenzhou.com/projects/CodeFormer/) for fine-tuning the pre-trained model. To evaluate the fine-tuned model, download our [Wider-Test-200](https://tianshukuai.github.io/). Note that our `Wider-Test-200` does not contain overlapping images in the `Wider-Test` dataset.
 
 
 ## Generating Pseudo Targets
@@ -197,6 +200,8 @@ For prefer to pre-training the Codeformer, please refer to their official implem
 
 
 ## Acknowledgement
+
+Our project is mainly based on [BasicSR](https://github.com/XPixelGroup/BasicSR), [DifFace](https://github.com/zsyOAOA/DifFace), and [CodeFormer](https://github.com/sczhou/CodeFormer). We also used the evaluation scripts from [VQFR](https://github.com/TencentARC/VQFR), and the low-pass filter implementation from [Resizer](https://github.com/assafshocher/resizer). A big thanks to their works and efforts in releasing the code.
 
 ## Citation
 If you find this project useful in your work, please consider citing it:

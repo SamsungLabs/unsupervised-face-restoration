@@ -1,0 +1,23 @@
+------------ Options -------------
+evs: -4,-3,-2,-1,0,2,3
+incr: 32
+input_dir: /Users/lucy.zhao/Data/mx/mx_its_calibrated_noise_s22+/calibrated_data_seq0_sorted
+iso: 50
+mid_vals: all
+model_name: inverse_transform_iso_50_max_bins_False_num_bins_32
+num_bins: 32
+raw_type: raw
+save_id: s22p_bin_calib_ev-4_3
+save_root: noise_models
+sensor_type: s22+
+-------------- End ----------------
+
+------------------------------
+Git Info:
+Current commit: 2428b22be41589302e020e0ad01019a7dbeb15a6
+Branches:
+ * lucy
+  main
+------------------------------
+Shell command:
+/Users/lucy.zhao/Projects/noise_model_ITS/jobs/s22p_bin_calib_ev-4_3.py
