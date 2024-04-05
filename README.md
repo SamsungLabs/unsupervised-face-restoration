@@ -15,9 +15,17 @@ Tianshu Kuai, Sina Honari, Igor Gilitschenski, and Alex Levinshtein
 
 Create a new conda environment using the provided `environment.yml` file:
 ```
-# Install conda environment
+# install conda environment
 conda env create -f environment.yml
 conda activate Diff_tuned_BFR
+
+# install pytorch
+pip install torch==1.13.0+cu116 torchvision==0.14.0+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
+
+# install python dependencies for CodeFormer
+cd CodeFormer
+python basicsr/setup.py develop
+cd ..
 ```
 
 Download pre-trained models:
@@ -36,7 +44,7 @@ python datapipe/prepare/face/save_filenames.py --face_dir [Face folder(512x512)]
 
 
 ### Synthetic Dataset
-To reproduce our results on synthetic dataset, download the [CelebA-Test dataset](https://xinntao.github.io/projects/gfpgan) (Both HQ and LQ). We provide script to generate our synthetic dataset described in the paper. Place the high-quality (512x512) face images in a directory and run:
+To reproduce our results on synthetic dataset, download the [CelebA-Test dataset](https://xinntao.github.io/projects/gfpgan) (Both HQ and LQ). We provide script to generate our synthetic dataset described in the paper. Place the high-quality (512x512) face images in a directory (hq_dir) and run:
 ```
 cd data_prep
 python generate_LQ_from_HQ.py --hq_dir ../data/entire_sets/CelebA-Test/celeba_512_validation --results_dir 4x-downsampling-severe-noise --iso_min 3200 --iso_max 3200 --scale 4
@@ -59,7 +67,7 @@ input_dir=data/celeba-raw-noise-4x-iso-1500/train_lq
 output_dir=data/celeba-raw-noise-4x-iso-1500/train_targets
 
 # generate pseudo targets for SwinIR
-bash scripts/generate_targets_general.sh input_dir output_dir 16
+bash scripts/generate_targets_swinir.sh $input_dir $output_dir 16
 # argv[1]: low-quality inputs
 # args[2]: output directory for pseudo targets
 # argv[3]: downsampling factor for low pass filter
@@ -84,7 +92,7 @@ pretrained_results_dir=data/celeba-raw-noise-4x-iso-3000/codeformer
 output_dir=data/celeba-raw-noise-4x-iso-3000/train_targets_codeformer
 
 # generate pseudo targets
-bash scripts/generate_targets_general.sh $pretrained_results_dir $output_dir 16
+bash scripts/generate_targets_general.sh $pretrained_results_dir $output_dir 8
 # argv[1]: pre-trained restoration model outputs
 # args[2]: output directory for pseudo targets
 # argv[3]: downsampling factor for low pass filter
