@@ -6,7 +6,7 @@ Tianshu Kuai, Sina Honari, Igor Gilitschenski, and Alex Levinshtein
 [**Project**](https://tianshukuai.github.io/) | [**Paper**](https://tianshukuai.github.io/)
 
 
-![teaser](misc/imgs/teaser.png)
+![teaser](misc/imgs/teaser2.png)
 
 
 ---
