@@ -1,9 +1,7 @@
 # download pre-trained weights
 
-cd weights
-
 # download the pre-trained diffusion model
-mkdir diffusion && cd diffusion
+cd weights && mkdir diffusion && cd diffusion
 wget https://github.com/zsyOAOA/DifFace/releases/download/V1.0/iddpm_ffhq512_ema500000.pth && cd ..
 
 # download our pre-trained SwinIR model
@@ -20,6 +18,6 @@ wget https://github.com/sczhou/CodeFormer/releases/download/v0.1.0/vqgan_discrim
 
 # download stats files for computing FID
 
-mkdir metrics && cd metrics
+cd weights && mkdir metrics && cd metrics
 wget https://github.com/SamsungLabs/DT-BFR/releases/download/v1.0.0/inception_CelebA-Test-500.pth
-wget https://github.com/SamsungLabs/DT-BFR/releases/download/v1.0.0/inception_FFHQ_512.pth && cd ..
+wget https://github.com/SamsungLabs/DT-BFR/releases/download/v1.0.0/inception_FFHQ_512.pth && cd ../..
