@@ -240,3 +240,6 @@ If you find this project useful in your work, please consider citing it:
     year={2025},
 }
 ```
+
+## License
+Please see the [LICENSE](LICENSE) file. 

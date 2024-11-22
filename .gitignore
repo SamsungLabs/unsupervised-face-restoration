@@ -7,4 +7,5 @@ utils/__pycache__/
 misc/
 logs/
 results/
-data
+data/
+weights/
