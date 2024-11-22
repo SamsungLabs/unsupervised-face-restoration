@@ -8,8 +8,8 @@ wget https://github.com/zsyOAOA/DifFace/releases/download/V1.0/iddpm_ffhq512_ema
 
 # download our pre-trained SwinIR model
 
-mkdir SwinIR && cd SwinIR
-wget $Our_SwinIR_link && cd ..
+# mkdir SwinIR && cd SwinIR
+# wget $Our_SwinIR_link && cd .. && cd ..
 
 # download pre-trained CodeFormer models
 
@@ -20,5 +20,5 @@ wget https://github.com/sczhou/CodeFormer/releases/download/v0.1.0/vqgan_discrim
 
 # download stats files for computing FID
 
-mkdir metrics && cd metrics
-wget $Our_synthetic_FID_stats_link && wget $FFHQ_FID_stats_link && cd ..
+# mkdir metrics && cd metrics
+# wget $Our_synthetic_FID_stats_link && wget $FFHQ_FID_stats_link && cd ..

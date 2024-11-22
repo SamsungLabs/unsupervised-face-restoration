@@ -202,14 +202,6 @@ def read_and_pad_image(scene_fn, args):
         img_bgr = np.clip(cv2.imread(scene_fn, cv2.IMREAD_ANYCOLOR | cv2.IMREAD_ANYDEPTH), 0, 1)  # [0, 1]
     else:
         img_bgr = np.clip(cv2.imread(scene_fn, cv2.IMREAD_COLOR) / 255, 0, 1)  # [0, 1]
-    # print(img_bgr.shape)
-    # We always use a cfa_factor of 4 for simplicity and reusability of the HR data.
-    # cfa_factor = 4  # if args.tetra_raw else 2
-    # padx = (args.scale * cfa_factor) - img_bgr.shape[1] % (args.scale * cfa_factor)
-    # pady = (args.scale * cfa_factor) - img_bgr.shape[0] % (args.scale * cfa_factor)
-    # print(padx,pady)
-    # img_bgr = cv2.copyMakeBorder(img_bgr, 0, pady, 0, padx, 0)
-    # print('after',img_bgr.shape)
     return img_bgr
 
 
@@ -217,20 +209,12 @@ def create_directories(args):
     # Create all directories needed for storing intermediate and final results
     cfa_pattern = 'tetra' if args.tetra_raw else 'bayer'
     raw_dir = Path(args.results_dir) / f'{args.dataset}_scale_x{args.scale}_{args.sensor}_{cfa_pattern}_ISO{args.iso_range[0]}-{args.iso_range[1]}'
-    dir_clean_RGB = raw_dir / f'clean_RGB_x{args.scale}'
-    dir_noisy_RAW = raw_dir / f'noisy_{cfa_pattern}_RAW'
-    dir_demosaic = raw_dir / f'demosaic_{cfa_pattern}'
     dir_rendered = raw_dir / f'demosaic_{cfa_pattern}_rendered'
-    dir_metadata = raw_dir / f'metadata'
 
     raw_dir.mkdir(parents=True, exist_ok=True)
-    # dir_clean_RGB.mkdir(parents=True, exist_ok=True)
-    # dir_noisy_RAW.mkdir(parents=True, exist_ok=True)
-    # dir_demosaic.mkdir(parents=True, exist_ok=True)
     dir_rendered.mkdir(parents=True, exist_ok=True)
-    # dir_metadata.mkdir(parents=True, exist_ok=True)
 
-    return dir_clean_RGB, dir_noisy_RAW, dir_demosaic, dir_rendered, dir_metadata
+    return dir_rendered
 
 
 if __name__ == '__main__':
@@ -289,7 +273,7 @@ if __name__ == '__main__':
     print(f'ISO for synthetic noise in the [{args.iso_min}, {args.iso_max}] range.')
 
     # Create all directories for storing generated data.
-    dir_clean_RGB, dir_noisy_RAW, dir_demosaic, dir_rendered, dir_metadata = create_directories(args)
+    dir_rendered = create_directories(args)
 
     for j, scene_fn in enumerate(all_scenes, 1):
 
@@ -327,12 +311,5 @@ if __name__ == '__main__':
 
         # Save all results. Since we are using opencv to write images, we need to convert RGB -> BGR before saving.
         fn_png = raw_name + '.png'
-        # cv2.imwrite(str(dir_clean_RGB / fn_png), np.uint8(img_bgr * (2**8 - 1)))
-        # cv2.imwrite(str(dir_noisy_RAW / fn_png), np.uint8(img_raw_noisy_bgr * (2**8 - 1)))
-        # cv2.imwrite(str(dir_demosaic / fn_png), np.uint8(img_demosaic_rgb[:, :, ::-1] * (2 ** 8 - 1)))
         cv2.imwrite(str(dir_rendered / fn_png), np.uint8(img_rendered_rgb[:, :, ::-1] * (2 ** 8 - 1)))
-
-        # Store metadata in one file (ISO, WB, CCM)
-        # metadata_path = dir_metadata / fn_png.replace('.png', '_metadata')
-        # np.savez(str(metadata_path), iso=ISO, wb=sampled_wbgain, ccm=sampled_ccm)
 

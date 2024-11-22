@@ -10,8 +10,6 @@ from utils import util_image
 parser = argparse.ArgumentParser(prog='SISR dataset Generation')
 parser.add_argument('--face_dir', default='data/FFHQ/images1024x1024', type=str,
                                             metavar='PATH', help="Path to save the HR face images")
-parser.add_argument('--save_dir', default='data/', type=str,
-                                       metavar='PATH', help="Path to save the resized face images")
 # FFHQ: png
 parser.add_argument('--ext', default='png', type=str, help="Image format of the HR face images")
 parser.add_argument('--pch_size', default=512, type=int, metavar='PATH', help="Cropped patch size")

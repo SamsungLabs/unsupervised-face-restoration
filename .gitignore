@@ -4,7 +4,6 @@ data_prep/
 __pycache__/
 utils/__pycache__/
 utils/__pycache__/
-datapipe/
 misc/
 logs/
 results/

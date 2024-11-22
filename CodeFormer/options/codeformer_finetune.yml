@@ -10,7 +10,7 @@ datasets:
     name: CelebA-raw-noise-512
     type: PairedImageDataset
     dataroot_lq: ../data/celeba-raw-noise-4x-iso-3000/train_lq                                # low-quality inputs directory
-    dataroot_gt: ..data/celeba-raw-noise-4x-iso-3000/train_targets_codeformer                 # pseudo targets directory
+    dataroot_gt: ../data/celeba-raw-noise-4x-iso-3000/train_targets_codeformer                # pseudo targets directory
     io_backend:
       type: disk
     mean: [0.5, 0.5, 0.5]

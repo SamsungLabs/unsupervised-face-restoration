@@ -1,12 +1,12 @@
-# Towards Unsupervised Blind Face Restoration using Diffusion Prior
+# [WACV 2025] Towards Unsupervised Blind Face Restoration using Diffusion Prior
 
 Tianshu Kuai, Sina Honari, Igor Gilitschenski, and Alex Levinshtein
 
 
-[**Project**](https://tianshukuai.github.io/) | [**Paper**](https://tianshukuai.github.io/)
+[**Project Page**](https://dt-bfr.github.io/) | [**arXiv**](https://arxiv.org/abs/2410.04618) | [**Data**](https://drive.google.com/drive/folders/1aIJnDIIlHsaLWKZvOjSxsg3Q_pA8gMDt?usp=sharing)
 
 
-![teaser](misc/imgs/teaser2.png)
+![teaser](misc/imgs/teaser.png)
 
 
 ---
@@ -35,11 +35,9 @@ bash misc/download_weights.sh
 
 ## Dataset Preparation
 
-Download the entire [FFHQ dataset](https://github.com/NVlabs/ffhq-dataset) for the adversarial loss during fine-tuning. Preprocess the images (1024x1024) to save them into size of `512x512`:
+Download the entire [FFHQ dataset](https://github.com/NVlabs/ffhq-dataset) for the adversarial loss during fine-tuning. Preprocess the images (1024x1024) to save them into size of `512x512` under the same parent directory:
 ```
-python datapipe/prepare/face/big2small_face.py --face_dir [Face folder(1024x1024)] --save_dir [Saving folder (512x512)] --pch_size 512 
-
-python datapipe/prepare/face/save_filenames.py --face_dir [Face folder(512x512)] 
+python datapipe/prepare/face/big2small_face.py --face_dir [Face folder(1024x1024)] --pch_size 512
 ```
 
 
@@ -47,10 +45,12 @@ python datapipe/prepare/face/save_filenames.py --face_dir [Face folder(512x512)]
 To reproduce our results on synthetic dataset, download the [CelebA-Test dataset](https://xinntao.github.io/projects/gfpgan) (Both HQ and LQ). We provide script to generate our synthetic dataset described in the paper. Place the high-quality (512x512) face images in a directory (hq_dir) and run:
 ```
 cd data_prep
-python generate_LQ_from_HQ.py --hq_dir ../data/entire_sets/CelebA-Test/celeba_512_validation --results_dir 4x-downsampling-severe-noise --iso_min 3200 --iso_max 3200 --scale 4
+python generate_LQ_from_HQ.py --hq_dir ../data/celeba_512_validation --results_dir 4x-downsampling-moderate-noise --iso_min 1500 --iso_max 1500 --scale 4
 cd ..
 ```
-The synthesized low-quality images will be saved to `./data_prep/4x-downsampling-severe-noise/div2k_scale_x4_IMX754_bayer_ISO3200-3200/demosaic_bayer_rendered`. 
+The synthesized low-quality images will be saved to `./data_prep/4x-downsampling-moderate-noise/div2k_scale_x4_IMX754_bayer_ISO1500-1500/demosaic_bayer_rendered`.
+
+Then split it into training set (2500 images) and testing set (500 images). Move the first 2500 images to `data/celeba-raw-noise-4x-iso-1500/train_lq` and the rest of the 500 images to `data/celeba-raw-noise-4x-iso-1500/test_lq`. Also create directories that contain the corresponding ground-truth images: `data/train_gt` and `data/test_gt` by splitting the `data/celeba_512_validation`. 
 
 ### Real-world Dataset
 
@@ -84,7 +84,7 @@ pretrained_results_dir=../data/celeba-raw-noise-4x-iso-3000/codeformer
 
 # run CodeFormer
 cd CodeFormer
-python inference_codeformer.py -w 0.5 --has_aligned --input_path $input_dir --output_path $pretrained_results_dir 
+python inference_codeformer.py -w 0.5 --has_aligned --input_path $input_dir --output_path $pretrained_results_dir
 cd ..
 
 # define paths
@@ -101,7 +101,7 @@ bash scripts/generate_targets_general.sh $pretrained_results_dir $output_dir 8
 ## Fine-tuning using Pseudo Targets
 
 ### SwinIR
-Prepare a config file for fine-tuning by following the example config [here](./configs/main/swinir_gan.yaml). To illustrate the procedure for fine-tuning, we use it as an example:
+Prepare a config file for fine-tuning by following the example config [here](./configs/main/swinir_gan.yaml). Specifically, make sure the paths specified under the `data` section are correct. Then run the following commands for fine-tuning:
 ```
 config=configs/main/swinir_gan.yaml
 log_dir=logs/swinir_gan_finetune
@@ -109,15 +109,19 @@ log_dir=logs/swinir_gan_finetune
 python train.py --cfg_path $config --save_dir $log_dir
 ```
 
+The results are saved in the corresponding folder under `logs`.
+
 ---
 
 ### CodeFormer
-Prepare a config file for fine-tuning by following the example config [here](./CodeFormer/options/codeformer_finetune.yml). To illustrate the procedure for fine-tuning, we use it as an example:
+Prepare a config file for fine-tuning by following the example config [here](./CodeFormer/options/codeformer_finetune.yml). Specifically, make sure the paths specified under the `datasets` section are correct. Then run the following commands for fine-tuning:
 ```
 cd CodeFormer
 python finetune.py -opt options/codeformer_finetune.yml
 cd ..
 ```
+
+The results are saved in the corresponding folder under `CodeFormer/experiments`.
 
 ## Evaluation
 
@@ -162,7 +166,8 @@ bash scripts/eval_real.sh $results_dir
 ```
 # define paths
 test_inputs=../data/celeba-raw-noise-4x-iso-3000/test_lq
-results_dir=../results/codeformer_finetune
+results_dir=../results/codeformer_finetune/restored_faces
+results_dir_eval=../results/codeformer_finetune
 gt_dir=data/CelebA-Test-split/test_gt
 
 # run fine-tuned model on testing set
@@ -171,7 +176,7 @@ python inference_codeformer.py -w 0.5 --has_aligned --input_path $test_inputs --
 cd ..
 
 # run evaluation
-bash scripts/eval_synthetic.sh $results_dir $gt_dir
+bash scripts/eval_synthetic.sh $results_dir_eval $gt_dir
 # argv[1]: results
 # args[2]: gt images
 ```
@@ -180,7 +185,8 @@ bash scripts/eval_synthetic.sh $results_dir $gt_dir
 ```
 # define paths
 test_inputs=../data/Wider-Test-200
-results_dir=../results/codeformer_finetune_wider-test-200
+results_dir=../results/codeformer_finetune_wider-test-200/restored_faces
+results_dir_eval=../results/codeformer_finetune_wider-test-200
 
 # run fine-tuned model on testing set
 cd CodeFormer
@@ -188,14 +194,14 @@ python inference_codeformer.py -w 0.5 --has_aligned --input_path $test_inputs --
 cd ..
 
 # run evaluation
-bash scripts/eval_real.sh $results_dir
+bash scripts/eval_real.sh $results_dir_eval
 # argv[1]: results
 ```
 
 
 ## Pre-training
 
-To pre-train your own SwinIR on synthetic dataset generated by commonly used degradation pipeline as in other blind face restoration papers:
+Please refer to our paper for details on the SwinIR pre-training. To pre-train your own SwinIR on synthetic dataset generated by commonly used degradation pipeline in blind face restoration works:
 ```
 # define paths
 config=configs/others/swinir_gan_pretrain.yaml
@@ -204,7 +210,7 @@ log_dir=logs/swinir_gan_pretrain
 python train.py --cfg_path $config --save_dir $log_dir
 ```
 
-For prefer to pre-training the Codeformer, please refer to their official implementation [here](https://github.com/sczhou/CodeFormer). We use the released checkpoint from CodeFormer authors as pre-trained model.
+For pre-training the Codeformer, please refer to their official implementation [here](https://github.com/sczhou/CodeFormer). We use the released checkpoint from CodeFormer authors as the pre-trained model.
 
 
 ## Acknowledgement

@@ -61,7 +61,7 @@ data:
     type: folder 
     params:
       dir_path: data/celeba-raw-noise-4x-iso-1500/train_lq                      # low-quality inputs directory
-      dir_path_gt: data/celeba-raw-noise-4x-iso-1500/swinir-gan-train_gt-16-v2  # pseudo targets directory
+      dir_path_gt: data/celeba-raw-noise-4x-iso-1500/train_targets              # pseudo targets directory
       ext: png
       need_gt_path: False
       length: ~
@@ -71,7 +71,7 @@ data:
     type: folder 
     params:
       dir_path: data/celeba-raw-noise-4x-iso-1500/test_lq                    # low-quality testing inputs directory for evaluation purpose
-      dir_path_gt: data/CelebA-Test-split/test_gt                            # GT directory for evaluation purpose
+      dir_path_gt: data/test_gt                                              # GT directory for evaluation purpose
       ext: png
       need_gt_path: False
       length: ~
