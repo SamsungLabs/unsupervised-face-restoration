@@ -3,7 +3,7 @@
 Tianshu Kuai, Sina Honari, Igor Gilitschenski, and Alex Levinshtein
 
 
-[**Project Page**](https://dt-bfr.github.io/) | [**arXiv**](https://arxiv.org/abs/2410.04618) | [**Data**](https://drive.google.com/drive/folders/1aIJnDIIlHsaLWKZvOjSxsg3Q_pA8gMDt?usp=sharing)
+[**Project Page**](https://dt-bfr.github.io/) | [**arXiv**](https://arxiv.org/abs/2410.04618) | [**Dataset**](https://drive.google.com/drive/folders/1aIJnDIIlHsaLWKZvOjSxsg3Q_pA8gMDt?usp=sharing)
 
 
 ![teaser](misc/imgs/teaser.png)
@@ -11,7 +11,7 @@ Tianshu Kuai, Sina Honari, Igor Gilitschenski, and Alex Levinshtein
 
 ---
 
-## Getting Started
+## Installation
 
 Create a new conda environment using the provided `environment.yml` file:
 ```
@@ -28,21 +28,21 @@ python basicsr/setup.py develop
 cd ..
 ```
 
-Download pre-trained models:
+Download the essential pre-trained model weights:
 ```
 bash misc/download_weights.sh
 ```
 
 ## Dataset Preparation
 
-Download the entire [FFHQ dataset](https://github.com/NVlabs/ffhq-dataset) for the adversarial loss during fine-tuning. Preprocess the images (1024x1024) to save them into size of `512x512` under the same parent directory:
+Download the entire [FFHQ dataset](https://github.com/NVlabs/ffhq-dataset) for the adversarial loss during fine-tuning. Preprocess the `1024x1024` images to save them into size of `512x512` under the same parent directory:
 ```
 python datapipe/prepare/face/big2small_face.py --face_dir [Face folder(1024x1024)] --pch_size 512
 ```
 
 
 ### Synthetic Dataset
-To reproduce our results on synthetic dataset, download the [CelebA-Test dataset](https://xinntao.github.io/projects/gfpgan) (Both HQ and LQ). We provide script to generate our synthetic dataset described in the paper. Place the high-quality (512x512) face images in a directory (hq_dir) and run:
+To reproduce our results on synthetic dataset, download the [CelebA-Test dataset](https://xinntao.github.io/projects/gfpgan) (Both HQ and LQ). We provide script to generate our synthetic dataset described in the paper. Place the high-quality `512x512` face images in a directory `--hq_dir` and run:
 ```
 cd data_prep
 python generate_LQ_from_HQ.py --hq_dir ../data/celeba_512_validation --results_dir 4x-downsampling-moderate-noise --iso_min 1500 --iso_max 1500 --scale 4
@@ -54,7 +54,7 @@ Then split it into training set (2500 images) and testing set (500 images). Move
 
 ### Real-world Dataset
 
-We use the entire [Wider-Test](https://shangchenzhou.com/projects/CodeFormer/) for fine-tuning the pre-trained model. To evaluate the fine-tuned model, download our [Wider-Test-200](https://tianshukuai.github.io/). Note that our `Wider-Test-200` does not contain overlapping images in the `Wider-Test` dataset.
+We use the entire [Wider-Test](https://shangchenzhou.com/projects/CodeFormer/) for fine-tuning the pre-trained model. To evaluate the fine-tuned model, download our [Wider-Test-200](https://drive.google.com/drive/folders/1aIJnDIIlHsaLWKZvOjSxsg3Q_pA8gMDt?usp=sharing). Note that our `Wider-Test-200` does not contain overlapping images in the `Wider-Test` dataset.
 
 
 ## Generating Pseudo Targets
