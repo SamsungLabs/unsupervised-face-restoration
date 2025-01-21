@@ -1,4 +1,4 @@
-# [WACV 2025] Towards Unsupervised Blind Face Restoration using Diffusion Prior
+# [WACV 2025 (Oral)] Towards Unsupervised Blind Face Restoration using Diffusion Prior
 
 Tianshu Kuai, Sina Honari, Igor Gilitschenski, and Alex Levinshtein
 
